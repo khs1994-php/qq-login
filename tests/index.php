@@ -1,10 +1,11 @@
 <?php
+
 session_start();
 
-define("BASEDIR", __DIR__ . "/../src");
+define('BASEDIR', __DIR__.'/../src');
 
 spl_autoload_register(function ($className) {
-    require BASEDIR . "/" . str_replace("\\", "/", $className) . ".php";
+    require BASEDIR.'/'.str_replace('\\', '/', $className).'.php';
 });
 
 // require 'vendor/autoload.php';
@@ -12,11 +13,11 @@ spl_autoload_register(function ($className) {
 use QQLogin\QC;
 use QQLogin\Oauth;
 
-if ($_GET['logout'] == "true") {
+if ($_GET['logout'] === 'true') {
     $_SESSION['status'] = false;
 }
 
-if ($_SESSION['status'] == true) {
+if ($_SESSION['status'] === true) {
     $openid = $_SESSION['openid'];
     $access_token = $_SESSION['access_token'];
     if (!$_SESSION['nickname']) {
@@ -39,14 +40,13 @@ $head_url
 
 EOF;
 } else {
-    if ($_GET['login'] == "true") {
+    if ($_GET['login'] === 'true') {
         $oauth = new Oauth();
         $oauth->login();
         //登录成功之后跳转到 响应页面
     } else {
-        echo <<<EOF
+        echo <<<'EOF'
     <a href="?login=true"><img src="https://qzonestyle.gtimg.cn/qzone/vas/opensns/res/img/bt_92X120.png"></a>
 EOF;
     }
-
 }
