@@ -14,15 +14,15 @@ class Recorder
     private $inc;
     private $error;
 
-    public function __construct(array $config=[])
+    public function __construct(array $config = [])
     {
         $this->error = new ErrorCase();
 
         // 读取配置文件
-        $config=json_decode(file_get_contents('config.json'));
+        $config = json_decode(file_get_contents('config.json'));
         $this->inc = $config;
         if (empty($this->inc)) {
-            $this->error->showError("20001");
+            $this->error->showError('20001');
         }
 
         if (empty($_SESSION['QC_userData'])) {
@@ -40,7 +40,7 @@ class Recorder
     public function read($name)
     {
         if (empty(self::$data[$name])) {
-            return null;
+            return;
         } else {
             return self::$data[$name];
         }
@@ -49,7 +49,7 @@ class Recorder
     public function readInc($name)
     {
         if (empty($this->inc->$name)) {
-            return null;
+            return;
         } else {
             return $this->inc->$name;
         }
