@@ -28,9 +28,9 @@ class Error
      *
      * @param string $code 错误代码
      * @param string $description 描述信息（可选）
+     *
      * @return array
      */
-
     public function showError(string $code, string $description = null)
     {
         // 查看配置选项中的错误报告是否打开
@@ -44,7 +44,7 @@ class Error
         } else {
             return json_encode([
                 'ret' => $code,
-                'msg' => $description
+                'msg' => $description,
             ]);
         }
     }
