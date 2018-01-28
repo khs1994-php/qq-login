@@ -21,7 +21,6 @@ class Call extends Oauth
      *
      * 构造方法
      *
-     * @since 5
      *
      * @param string $access_token access_token value
      * @param string $openid openid value
@@ -98,7 +97,8 @@ class Call extends Oauth
     }
 
     //调用相应api
-    private function applyAPI($arr, $argsList, $baseUrl, $method)
+
+    private function applyAPI($arr, $argsList, string $baseUrl, string $method)
     {
         $pre = '#';
         $keysArr = $this->array;
@@ -177,11 +177,9 @@ class Call extends Oauth
      * @param string $name 调用的方法名称
      * @param array $arg 参数列表数组
      *
-     * @since 5.0
-     *
      * @return array          返加调用结果数组
      */
-    public function __call($name, $arg)
+    public function __call(string $name, array $arg)
     {
         // 如果APIMap不存在相应的api
         if (empty($this->APIMap[$name])) {
@@ -232,8 +230,6 @@ class Call extends Oauth
      *
      * @param void
      *
-     * @since 5.0
-     *
      * @return string 返加access_token
      */
     public function getAccessToken()
@@ -242,7 +238,7 @@ class Call extends Oauth
     }
 
     // 简单实现json到php数组转换功能
-    private function simple_json_parser($json)
+    private function simple_json_parser(string $json)
     {
         $json = str_replace('{', '', str_replace('}', '', $json));
         $jsonValue = explode(',', $json);

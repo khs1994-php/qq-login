@@ -24,7 +24,7 @@ class Config
         }
     }
 
-    public function set($name, $value)
+    public function set(string $name, string $value)
     {
         self::$data[$name] = $value;
     }
@@ -38,7 +38,7 @@ class Config
         }
     }
 
-    public function readConfig($name)
+    public function readConfig(string $name)
     {
         if (empty($this->config->$name)) {
             return 0;
@@ -47,7 +47,7 @@ class Config
         }
     }
 
-    public function delete($name)
+    public function delete(string $name)
     {
         unset(self::$data[$name]);
     }
