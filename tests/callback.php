@@ -6,20 +6,20 @@ require '../vendor/autoload.php';
 
 use QQLogin\Oauth;
 
-$config=[
-    "appid"=>"101440339",
-    "appkey"=> "ac1c9a426b3685d61c928c5ee3509c7a",
-    "callback"=> "http://demo.khs1994.com/tests/callback.php",
-    "scope"=>"get_user_info",
-    "errorReport"=> true,
-    ];
+$config = [
+    "appid" => "101440339",
+    "appkey" => "ac1c9a426b3685d61c928c5ee3509c7a",
+    "callback" => "http://demo.khs1994.com/tests/callback.php",
+    "scope" => "get_user_info",
+    "errorReport" => true,
+];
 
 $_SESSION['status'] = true;
 
 // 请求 access_token
 
 $oauth = new Oauth($config);
-$access_token = $oauth->callback();
+$access_token = $oauth->getAccessToken();
 $openid = $oauth->getOpenId();
 
 $_SESSION['access_token'] = $access_token;

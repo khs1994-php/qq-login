@@ -8,12 +8,11 @@ class Config
     private $config;
     private $error;
 
-    public function __construct(array $config = [])
+    public function __construct(array $config)
     {
         $this->error = new Error();
 
-        // 读取配置文件
-        $this->config = (object) $config;
+        $this->config = (object)$config;
         if (empty($this->config)) {
             $this->error->showError('20001');
         }

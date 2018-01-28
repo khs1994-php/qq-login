@@ -13,7 +13,7 @@ namespace QQLogin;
  * */
 class Call extends Oauth
 {
-    private $kesArr;
+    private $array;
     private $APIMap;
 
     /**
@@ -23,25 +23,25 @@ class Call extends Oauth
      *
      * @since 5
      *
-     * @param string $access_token  access_token value
-     * @param string $openid        openid value
+     * @param string $access_token access_token value
+     * @param string $openid openid value
+     * @param array $config
      *
-     * @return object QC
      */
-    public function __construct(string $access_token = null, string $openid = null, array $config=[])
+    public function __construct(string $access_token = null, string $openid = null, array $config = [])
     {
         parent::__construct($config);
 
         //如果access_token和openid为空，则从session里去取，适用于demo展示情形
         if ($access_token === null || $openid === null) {
-            $this->keysArr = [
-                'oauth_consumer_key' => (int) $this->config->readConfig('appid'),
+            $this->array = [
+                'oauth_consumer_key' => (int)$this->config->readConfig('appid'),
                 'access_token' => $this->config->get('access_token'),
                 'openid' => $this->config->get('openid'),
             ];
         } else {
-            $this->keysArr = [
-                'oauth_consumer_key' => (int) $this->config->readConfig('appid'),
+            $this->array = [
+                'oauth_consumer_key' => (int)$this->config->readConfig('appid'),
                 'access_token' => $access_token,
                 'openid' => $openid,
             ];
@@ -70,11 +70,6 @@ class Call extends Oauth
                 ['format' => 'json'],
                 'GET',
             ],
-            'add_one_blog' => [
-                'https://graph.qq.com/blog/add_one_blog',
-                ['title', 'content', 'format' => 'json'],
-                'GET',
-            ],
             'add_album' => [
                 'https://graph.qq.com/photo/add_album',
                 ['albumname', '#albumdesc', '#priv', 'format' => 'json'],
@@ -89,61 +84,9 @@ class Call extends Oauth
                 'https://graph.qq.com/photo/list_album',
                 ['format' => 'json'],
             ],
-            'add_share' => [
-                'https://graph.qq.com/share/add_share',
-                ['title', 'url', '#comment', '#summary', '#images', 'format' => 'json', '#type', '#playurl', '#nswb', 'site', 'fromurl'],
-                'POST',
-            ],
             'check_page_fans' => [
                 'https://graph.qq.com/user/check_page_fans',
                 ['page_id' => '314416946', 'format' => 'json'],
-            ],
-            /*                    wblog                             */
-
-            'add_t' => [
-                'https://graph.qq.com/t/add_t',
-                ['format' => 'json', 'content', '#clientip', '#longitude', '#compatibleflag'],
-                'POST',
-            ],
-            'add_pic_t' => [
-                'https://graph.qq.com/t/add_pic_t',
-                ['content', 'pic', 'format' => 'json', '#clientip', '#longitude', '#latitude', '#syncflag', '#compatiblefalg'],
-                'POST',
-            ],
-            'del_t' => [
-                'https://graph.qq.com/t/del_t',
-                ['id', 'format' => 'json'],
-                'POST',
-            ],
-            'get_repost_list' => [
-                'https://graph.qq.com/t/get_repost_list',
-                ['flag', 'rootid', 'pageflag', 'pagetime', 'reqnum', 'twitterid', 'format' => 'json'],
-            ],
-            'get_info' => [
-                'https://graph.qq.com/user/get_info',
-                ['format' => 'json'],
-            ],
-            'get_other_info' => [
-                'https://graph.qq.com/user/get_other_info',
-                ['format' => 'json', '#name', 'fopenid'],
-            ],
-            'get_fanslist' => [
-                'https://graph.qq.com/relation/get_fanslist',
-                ['format' => 'json', 'reqnum', 'startindex', '#mode', '#install', '#sex'],
-            ],
-            'get_idollist' => [
-                'https://graph.qq.com/relation/get_idollist',
-                ['format' => 'json', 'reqnum', 'startindex', '#mode', '#install'],
-            ],
-            'add_idol' => [
-                'https://graph.qq.com/relation/add_idol',
-                ['format' => 'json', '#name-1', '#fopenids-1'],
-                'POST',
-            ],
-            'del_idol' => [
-                'https://graph.qq.com/relation/del_idol',
-                ['format' => 'json', '#name-1', '#fopenid-1'],
-                'POST',
             ],
             /*                           pay                          */
 
@@ -158,7 +101,7 @@ class Call extends Oauth
     private function applyAPI($arr, $argsList, $baseUrl, $method)
     {
         $pre = '#';
-        $keysArr = $this->keysArr;
+        $keysArr = $this->array;
 
         $optionArgList = []; //一些多项选填参数必选一的情形
         foreach ($argsList as $key => $val) {
@@ -188,7 +131,7 @@ class Call extends Oauth
                     $arr[$tmpKey] = $tmpVal;
                 } else {
                     if ($v = $_FILES[$tmpKey]) {
-                        $filename = dirname($v['tmp_name']).'/'.$v['name'];
+                        $filename = dirname($v['tmp_name']) . '/' . $v['name'];
                         move_uploaded_file($v['tmp_name'], $filename);
                         $arr[$tmpKey] = "@$filename";
                     } else {
@@ -210,7 +153,7 @@ class Call extends Oauth
 
             if (!$n) {
                 $str = implode(',', $val);
-                $this->error->showError('api调用参数错误', $str.'必填一个');
+                $this->error->showError('api调用参数错误', $str . '必填一个');
             }
         }
 
@@ -221,7 +164,7 @@ class Call extends Oauth
                 $response = $this->curl->post($baseUrl, $keysArr);
             }
         } elseif ($method === 'GET') {
-            $response = $this->curl->get($baseUrl, $keysArr);
+            $response = $this->curl->get($baseUrl . '?' . http_build_query($keysArr));
         }
 
         return $response;
@@ -231,8 +174,8 @@ class Call extends Oauth
      * _call
      * 魔术方法，做api调用转发.
      *
-     * @param string $name    调用的方法名称
-     * @param array $arg      参数列表数组
+     * @param string $name 调用的方法名称
+     * @param array $arg 参数列表数组
      *
      * @since 5.0
      *
@@ -295,7 +238,7 @@ class Call extends Oauth
      */
     public function getAccessToken()
     {
-        return $this->config->read('access_token');
+        return $this->config->get('access_token');
     }
 
     // 简单实现json到php数组转换功能
