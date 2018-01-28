@@ -256,10 +256,10 @@ class QQCall extends Oauth
         }
         // 对于get_tenpay_addr，特殊处理，php json_decode对\xA312此类字符支持不好
         if ($name !== 'get_tenpay_addr') {
-            $response = json_decode($this->_applyAPI($arg[0], $argsList, $baseUrl, $method));
+            $response = json_decode($this->applyAPI($arg[0], $argsList, $baseUrl, $method));
             $responseArr = $this->objToArr($response);
         } else {
-            $responseArr = $this->simple_json_parser($this->_applyAPI($arg[0], $argsList, $baseUrl, $method));
+            $responseArr = $this->simple_json_parser($this->applyAPI($arg[0], $argsList, $baseUrl, $method));
         }
         // 检查返回ret判断api是否成功调用
         if ($responseArr['ret'] === 0) {
