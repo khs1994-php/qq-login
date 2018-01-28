@@ -11,7 +11,7 @@ namespace QQLogin;
 /*
  * @brief QC类，api外部对象，调用接口全部依赖于此对象
  * */
-class QQCall extends Oauth
+class Call extends Oauth
 {
     private $kesArr;
     private $APIMap;
@@ -35,13 +35,13 @@ class QQCall extends Oauth
         //如果access_token和openid为空，则从session里去取，适用于demo展示情形
         if ($access_token === null || $openid === null) {
             $this->keysArr = [
-                'oauth_consumer_key' => (int) $this->recorder->readConfig('appid'),
-                'access_token' => $this->recorder->read('access_token'),
-                'openid' => $this->recorder->read('openid'),
+                'oauth_consumer_key' => (int) $this->config->readConfig('appid'),
+                'access_token' => $this->config->get('access_token'),
+                'openid' => $this->config->get('openid'),
             ];
         } else {
             $this->keysArr = [
-                'oauth_consumer_key' => (int) $this->recorder->readConfig('appid'),
+                'oauth_consumer_key' => (int) $this->config->readConfig('appid'),
                 'access_token' => $access_token,
                 'openid' => $openid,
             ];
@@ -216,12 +216,12 @@ class QQCall extends Oauth
 
         if ($method === 'POST') {
             if ($baseUrl === 'https://graph.qq.com/blog/add_one_blog') {
-                $response = $this->urlUtils->post($baseUrl, $keysArr, 1);
+                $response = $this->curl->post($baseUrl, $keysArr);
             } else {
-                $response = $this->urlUtils->post($baseUrl, $keysArr, 0);
+                $response = $this->curl->post($baseUrl, $keysArr);
             }
         } elseif ($method === 'GET') {
-            $response = $this->urlUtils->get($baseUrl, $keysArr);
+            $response = $this->curl->get($baseUrl, $keysArr);
         }
 
         return $response;
@@ -295,7 +295,7 @@ class QQCall extends Oauth
      */
     public function getAccessToken()
     {
-        return $this->recorder->read('access_token');
+        return $this->config->read('access_token');
     }
 
     // 简单实现json到php数组转换功能

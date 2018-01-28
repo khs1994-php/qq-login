@@ -2,13 +2,7 @@
 
 session_start();
 
-define('BASEDIR', __DIR__.'/../src');
-
-spl_autoload_register(function ($className) {
-    require BASEDIR.'/'.str_replace('\\', '/', $className).'.php';
-});
-
-// require '../vendor/autoload.php';
+require '../vendor/autoload.php';
 
 use QQLogin\Oauth;
 

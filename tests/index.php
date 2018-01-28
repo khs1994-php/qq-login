@@ -2,15 +2,15 @@
 
 session_start();
 
-define('BASEDIR', __DIR__.'/../src');
+//define('BASEDIR', __DIR__.'/../src');
+//
+//spl_autoload_register(function ($className) {
+//    require BASEDIR.'/'.str_replace('\\', '/', $className).'.php';
+//});
 
-spl_autoload_register(function ($className) {
-    require BASEDIR.'/'.str_replace('\\', '/', $className).'.php';
-});
+require '../vendor/autoload.php';
 
-// require 'vendor/autoload.php';
-
-use QQLogin\QQCall;
+use QQLogin\Call;
 use QQLogin\Oauth;
 
 $config=[
@@ -29,7 +29,7 @@ if ($_SESSION['status'] === true) {
     $openid = $_SESSION['openid'];
     $access_token = $_SESSION['access_token'];
     if (!$_SESSION['nickname']) {
-        $qc = new QQCall($access_token, $openid,$config);
+        $qc = new Call($access_token, $openid,$config);
         $res = $qc->get_user_info();
         $nickname = $res['nickname'];
         $head_url = $res['figureurl_qq_2'];

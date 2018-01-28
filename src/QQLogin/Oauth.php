@@ -1,12 +1,8 @@
 <?php
 
-/* PHP SDK
- * @version 2.0.0
- * @author connect@qq.com
- * @copyright © 2013, Tencent Corporation. All rights reserved.
- */
-
 namespace QQLogin;
+
+use Curl\Curl;
 
 class Oauth
 {
@@ -15,31 +11,31 @@ class Oauth
     const GET_ACCESS_TOKEN_URL = 'https://graph.qq.com/oauth2.0/token';
     const GET_OPENID_URL = 'https://graph.qq.com/oauth2.0/me';
 
-    protected $recorder;
-    public $urlUtils;
+    protected $config;
+    public $curl;
     protected $error;
 
     public function __construct(array $config=[])
     {
-        $this->recorder = new Recorder($config);
-        $this->urlUtils = new URL();
-        $this->error = new ErrorCase();
+        $this->config = new Config($config);
+        $this->error = new Error();
+        $this->curl=new Curl();
     }
 
     public function login()
     {
         // 读取配置
 
-        $appid = $this->recorder->readConfig('appid');
-        $callback = $this->recorder->readConfig('callback');
-        $scope = $this->recorder->readConfig('scope');
+        $appid = $this->config->readConfig('appid');
+        $callback = $this->config->readConfig('callback');
+        $scope = $this->config->readConfig('scope');
 
         // 生成唯一随机串防CSRF攻击
         $state = md5(uniqid(rand(), true));
 
         // 写入配置
 
-        $this->recorder->write('state', $state);
+        $this->config->set('state', $state);
 
         // 构造请求参数列表
 
@@ -60,7 +56,7 @@ class Oauth
 
     public function callback()
     {
-        $state = $this->recorder->read('state');
+        $state = $this->config->get('state');
 
         // 验证 state 防止 CSRF 攻击
         if ($_GET['state'] !== $state) {
@@ -70,15 +66,15 @@ class Oauth
         // 请求参数列表
         $keysArr = [
             'grant_type' => 'authorization_code',
-            'client_id' => $this->recorder->readConfig('appid'),
-            'redirect_uri' => $this->recorder->readConfig('callback'),
-            'client_secret' => $this->recorder->readConfig('appkey'),
+            'client_id' => $this->config->readConfig('appid'),
+            'redirect_uri' => $this->config->readConfig('callback'),
+            'client_secret' => $this->config->readConfig('appkey'),
             'code' => $_GET['code'],
         ];
 
         // 构造请求access_token的url
         $token_url=self::GET_ACCESS_TOKEN_URL.'?'.http_build_query($keysArr);
-        $response = urldecode($this->urlUtils->getContents($token_url));
+        $response = urldecode($this->curl->get($token_url));
 
         if (strpos($response, 'callback') !== false) {
             $lpos = strpos($response, '(');
@@ -94,7 +90,7 @@ class Oauth
         $params = [];
         parse_str($response, $params);
 
-        $this->recorder->write('access_token', $params['access_token']);
+        $this->config->set('access_token', $params['access_token']);
 
         return $params['access_token'];
     }
@@ -104,11 +100,11 @@ class Oauth
 
         // 请求参数列表
         $keysArr = [
-            'access_token' => $this->recorder->read('access_token'),
+            'access_token' => $this->config->get('access_token'),
         ];
 
         $graph_url = self::GET_OPENID_URL.'?'.http_build_query($keysArr);
-        $response = $this->urlUtils->getContents($graph_url);
+        $response = $this->curl->get($graph_url);
 
         // 检测错误是否发生
         if (strpos($response, 'callback') !== false) {
@@ -124,7 +120,7 @@ class Oauth
         }
 
         // 记录openid
-        $this->recorder->write('openid', $user->openid);
+        $this->config->set('openid', $user->openid);
 
         return $user->openid;
     }

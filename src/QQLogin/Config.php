@@ -1,14 +1,8 @@
 <?php
 
-/* PHP SDK
- * @version 2.0.0
- * @author connect@qq.com
- * @copyright © 2013, Tencent Corporation. All rights reserved.
- */
-
 namespace QQLogin;
 
-class Recorder
+class Config
 {
     private static $data;
     private $config;
@@ -16,7 +10,7 @@ class Recorder
 
     public function __construct(array $config = [])
     {
-        $this->error = new ErrorCase();
+        $this->error = new Error();
 
         // 读取配置文件
         $this->config = (object) $config;
@@ -31,15 +25,15 @@ class Recorder
         }
     }
 
-    public function write($name, $value)
+    public function set($name, $value)
     {
         self::$data[$name] = $value;
     }
 
-    public function read($name)
+    public function get($name)
     {
         if (empty(self::$data[$name])) {
-            return;
+            return 0;
         } else {
             return self::$data[$name];
         }
@@ -48,7 +42,7 @@ class Recorder
     public function readConfig($name)
     {
         if (empty($this->config->$name)) {
-            return;
+            return 0;
         } else {
             return $this->config->$name;
         }

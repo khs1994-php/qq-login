@@ -1,18 +1,12 @@
 <?php
 
-/* PHP SDK
- * @version 2.0.0
- * @author connect@qq.com
- * @copyright © 2013, Tencent Corporation. All rights reserved.
- */
-
 namespace QQLogin;
 
 /*
  * @brief ErrorCase类，封闭异常
  * */
 
-class ErrorCase
+class Error
 {
     private $errorMsg;
     private $recorder;
