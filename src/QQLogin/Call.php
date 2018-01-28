@@ -1,36 +1,30 @@
 <?php
 
-/* PHP SDK
- * @version 2.0.0
- * @author connect@qq.com
- * @copyright © 2013, Tencent Corporation. All rights reserved.
- */
-
 namespace QQLogin;
 
-/*
+/**
  * @brief QC类，api外部对象，调用接口全部依赖于此对象
- * */
+ *
+ */
 class Call extends Oauth
 {
     private $array;
     private $APIMap;
 
     /**
-     * _construct.
      *
      * 构造方法
-     *
      *
      * @param string $access_token access_token value
      * @param string $openid openid value
      * @param array $config
+     *
      */
     public function __construct(string $access_token = null, string $openid = null, array $config = [])
     {
         parent::__construct($config);
 
-        //如果access_token和openid为空，则从session里去取，适用于demo展示情形
+        // 如果 access_token 和 openid 为空，则从 session 里去取，适用于 demo 展示情形
         if ($access_token === null || $openid === null) {
             $this->array = [
                 'oauth_consumer_key' => (int) $this->config->readConfig('appid'),
@@ -45,10 +39,10 @@ class Call extends Oauth
             ];
         }
 
-        //初始化APIMap
         /*
          * 加#表示非必须，无则不传入url(url中不会出现该参数)， "key" => "val" 表示key如果没有定义则使用默认值val
          * 规则 array( baseUrl, argListArr, method)
+         *
          */
         $this->APIMap = [
 
@@ -177,6 +171,7 @@ class Call extends Oauth
      * @param array $arg 参数列表数组
      *
      * @return array          返加调用结果数组
+     *
      */
     public function __call(string $name, array $arg)
     {
@@ -229,6 +224,7 @@ class Call extends Oauth
      * @param void
      *
      * @return string 返加access_token
+     *
      */
     public function getAccessToken()
     {

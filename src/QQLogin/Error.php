@@ -2,9 +2,11 @@
 
 namespace QQLogin;
 
-/*
+/**
+ *
  * @brief ErrorCase类，封闭异常
- * */
+ *
+ */
 
 class Error
 {
@@ -14,12 +16,10 @@ class Error
     public function __construct()
     {
         $this->errorMsg = [
-            '20001' => '配置文件损坏或无法读取，请重新执行intall',
+            '20001' => '配置项错误。',
             '30001' => 'The state does not match. You may be a victim of CSRF.',
-            '50001' => '可能是服务器无法请求https协议,可能未开启curl支持,请尝试开启curl支持，重启web服务器，如果问题仍未解决，请联系我们',
+            '50001' => '可能是服务器无法请求 https 协议,可能未开启 curl 扩展,请尝试开启 curl 扩展，重启 web 服务器。',
         ];
-
-//        $this->recorder=new Recorder($config);
     }
 
     /**
@@ -33,16 +33,11 @@ class Error
      */
     public function showError(string $code, string $description = null)
     {
-        // 查看配置选项中的错误报告是否打开
-
-//        if (!$this->recorder->readConfig('errorReport')) {
-//            die(); //die quietly
-//        }
-
         if ($description === null) {
             die($this->errorMsg[$code]);
         } else {
-            return json_encode([
+            header("Content-Type: application/json");
+            echo json_encode([
                 'ret' => $code,
                 'msg' => $description,
             ]);
