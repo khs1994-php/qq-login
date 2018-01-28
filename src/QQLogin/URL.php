@@ -18,7 +18,7 @@ class URL
 
     public function __construct()
     {
-        $this->error = new ErrorCase($config);
+        $this->error = new ErrorCase();
     }
 
     /**
@@ -61,9 +61,9 @@ class URL
      */
     public function get($url, $keysArr)
     {
-        $url = $url.http_build_query($keysArr);
+        $url = $url.'?'.http_build_query($keysArr);
 
-        return $this->getContents($combined);
+        return $this->getContents($url);
     }
 
     /**

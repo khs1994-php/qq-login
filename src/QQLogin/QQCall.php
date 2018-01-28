@@ -245,6 +245,7 @@ class QQCall extends Oauth
             $this->error->showError('api调用名称错误', "不存在的API: <span style='color:red;'>$name</span>");
         }
 
+
         // 从APIMap获取api相应参数
         $baseUrl = $this->APIMap[$name][0];
         $argsList = $this->APIMap[$name][1];
@@ -253,7 +254,6 @@ class QQCall extends Oauth
         if (empty($arg)) {
             $arg[0] = null;
         }
-
         // 对于get_tenpay_addr，特殊处理，php json_decode对\xA312此类字符支持不好
         if ($name !== 'get_tenpay_addr') {
             $response = json_decode($this->_applyAPI($arg[0], $argsList, $baseUrl, $method));
@@ -261,7 +261,6 @@ class QQCall extends Oauth
         } else {
             $responseArr = $this->simple_json_parser($this->_applyAPI($arg[0], $argsList, $baseUrl, $method));
         }
-
         // 检查返回ret判断api是否成功调用
         if ($responseArr['ret'] === 0) {
             return $responseArr;

@@ -19,11 +19,11 @@ class Oauth
     public $urlUtils;
     protected $error;
 
-    public function __construct($config)
+    public function __construct(array $config=[])
     {
         $this->recorder = new Recorder($config);
         $this->urlUtils = new URL();
-        $this->error = new ErrorCase($config);
+        $this->error = new ErrorCase();
     }
 
     public function login()
@@ -51,7 +51,7 @@ class Oauth
             'scope' => $scope,
         ];
 
-        $login_url = self::GET_AUTH_CODE_URL.http_build_query($keysArr);
+        $login_url = self::GET_AUTH_CODE_URL.'?'.http_build_query($keysArr);
 
         // 跳转网址
 
@@ -71,14 +71,14 @@ class Oauth
         $keysArr = [
             'grant_type' => 'authorization_code',
             'client_id' => $this->recorder->readConfig('appid'),
-            'redirect_uri' => urlencode($this->recorder->readConfig('callback')),
+            'redirect_uri' => $this->recorder->readConfig('callback'),
             'client_secret' => $this->recorder->readConfig('appkey'),
             'code' => $_GET['code'],
         ];
 
         // 构造请求access_token的url
-        $token_url=self::GET_ACCESS_TOKEN_URL.http_build_query($keysArr);
-        $response = $this->urlUtils->getContents($token_url);
+        $token_url=self::GET_ACCESS_TOKEN_URL.'?'.http_build_query($keysArr);
+        $response = urldecode($this->urlUtils->getContents($token_url));
 
         if (strpos($response, 'callback') !== false) {
             $lpos = strpos($response, '(');
@@ -107,7 +107,7 @@ class Oauth
             'access_token' => $this->recorder->read('access_token'),
         ];
 
-        $graph_url = self::GET_OPENID_URL.http_build_query($keysArr);
+        $graph_url = self::GET_OPENID_URL.'?'.http_build_query($keysArr);
         $response = $this->urlUtils->getContents($graph_url);
 
         // 检测错误是否发生
@@ -116,6 +116,7 @@ class Oauth
             $rpos = strrpos($response, ')');
             $response = substr($response, $lpos + 1, $rpos - $lpos - 1);
         }
+
 
         $user = json_decode($response);
         if (isset($user->error)) {

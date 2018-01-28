@@ -19,7 +19,7 @@ class Recorder
         $this->error = new ErrorCase();
 
         // 读取配置文件
-        $this->config = $config;
+        $this->config = (object) $config;
         if (empty($this->config)) {
             $this->error->showError('20001');
         }
