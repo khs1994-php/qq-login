@@ -11,7 +11,7 @@ namespace QQLogin;
 class Recorder
 {
     private static $data;
-    private $inc;
+    private $config;
     private $error;
 
     public function __construct(array $config = [])
@@ -19,9 +19,8 @@ class Recorder
         $this->error = new ErrorCase();
 
         // 读取配置文件
-        $config = json_decode(file_get_contents('config.json'));
-        $this->inc = $config;
-        if (empty($this->inc)) {
+        $this->config = $config;
+        if (empty($this->config)) {
             $this->error->showError('20001');
         }
 
@@ -46,12 +45,12 @@ class Recorder
         }
     }
 
-    public function readInc($name)
+    public function readConfig($name)
     {
-        if (empty($this->inc->$name)) {
+        if (empty($this->config->$name)) {
             return;
         } else {
-            return $this->inc->$name;
+            return $this->config->$name;
         }
     }
 

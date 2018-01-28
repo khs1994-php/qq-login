@@ -4,19 +4,27 @@ session_start();
 
 define('BASEDIR', __DIR__.'/../src');
 
-spl_autoload_register(function ($className) {
-    require BASEDIR.'/'.str_replace('\\', '/', $className).'.php';
-});
+// spl_autoload_register(function ($className) {
+//     require BASEDIR.'/'.str_replace('\\', '/', $className).'.php';
+// });
 
-// require 'vendor/autoload.php';
+require '../vendor/autoload.php';
 
 use QQLogin\Oauth;
+
+$config=[
+    "appid"=>"101440339",
+    "appkey"=> "ac1c9a426b3685d61c928c5ee3509c7a",
+    "callback"=> "http://demo.khs1994.com/tests/callback.php",
+    "scope"=>"get_user_info",
+    "errorReport"=> true,
+    ];
 
 $_SESSION['status'] = true;
 
 // 请求 access_token
 
-$oauth = new Oauth();
+$oauth = new Oauth($config);
 $access_token = $oauth->callback();
 $openid = $oauth->getOpenId();
 

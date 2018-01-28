@@ -18,31 +18,7 @@ class URL
 
     public function __construct()
     {
-        $this->error = new ErrorCase();
-    }
-
-    /**
-     * combineURL
-     * 拼接url.
-     *
-     * @param string $baseURL 基于的url
-     * @param array $keysArr 参数列表数组
-     *
-     * @return string           返回拼接的url
-     */
-    public function combineURL($baseURL, $keysArr)
-    {
-        $combined = $baseURL.'?';
-        $valueArr = [];
-
-        foreach ($keysArr as $key => $val) {
-            $valueArr[] = "$key=$val";
-        }
-
-        $keyStr = implode('&', $valueArr);
-        $combined .= ($keyStr);
-
-        return $combined;
+        $this->error = new ErrorCase($config);
     }
 
     /**
@@ -85,7 +61,7 @@ class URL
      */
     public function get($url, $keysArr)
     {
-        $combined = $this->combineURL($url, $keysArr);
+        $url = $url.http_build_query($keysArr);
 
         return $this->getContents($combined);
     }

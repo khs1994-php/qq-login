@@ -11,7 +11,7 @@ namespace QQLogin;
 /*
  * @brief QC类，api外部对象，调用接口全部依赖于此对象
  * */
-class QC extends Oauth
+class QQCall extends Oauth
 {
     private $kesArr;
     private $APIMap;
@@ -28,20 +28,20 @@ class QC extends Oauth
      *
      * @return object QC
      */
-    public function __construct($access_token = '', $openid = '')
+    public function __construct(string $access_token = null, string $openid = null, array $config=[])
     {
-        parent::__construct();
+        parent::__construct($config);
 
         //如果access_token和openid为空，则从session里去取，适用于demo展示情形
-        if ($access_token === '' || $openid === '') {
+        if ($access_token === null || $openid === null) {
             $this->keysArr = [
-                'oauth_consumer_key' => (int) $this->recorder->readInc('appid'),
+                'oauth_consumer_key' => (int) $this->recorder->readConfig('appid'),
                 'access_token' => $this->recorder->read('access_token'),
                 'openid' => $this->recorder->read('openid'),
             ];
         } else {
             $this->keysArr = [
-                'oauth_consumer_key' => (int) $this->recorder->readInc('appid'),
+                'oauth_consumer_key' => (int) $this->recorder->readConfig('appid'),
                 'access_token' => $access_token,
                 'openid' => $openid,
             ];

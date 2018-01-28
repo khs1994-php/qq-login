@@ -19,20 +19,20 @@ class Oauth
     public $urlUtils;
     protected $error;
 
-    public function __construct()
+    public function __construct($config)
     {
-        $this->recorder = new Recorder();
+        $this->recorder = new Recorder($config);
         $this->urlUtils = new URL();
-        $this->error = new ErrorCase();
+        $this->error = new ErrorCase($config);
     }
 
     public function login()
     {
         // 读取配置
 
-        $appid = $this->recorder->readInc('appid');
-        $callback = $this->recorder->readInc('callback');
-        $scope = $this->recorder->readInc('scope');
+        $appid = $this->recorder->readConfig('appid');
+        $callback = $this->recorder->readConfig('callback');
+        $scope = $this->recorder->readConfig('scope');
 
         // 生成唯一随机串防CSRF攻击
         $state = md5(uniqid(rand(), true));
@@ -51,7 +51,7 @@ class Oauth
             'scope' => $scope,
         ];
 
-        $login_url = $this->urlUtils->combineURL(self::GET_AUTH_CODE_URL, $keysArr);
+        $login_url = self::GET_AUTH_CODE_URL.http_build_query($keysArr);
 
         // 跳转网址
 
@@ -70,14 +70,14 @@ class Oauth
         // 请求参数列表
         $keysArr = [
             'grant_type' => 'authorization_code',
-            'client_id' => $this->recorder->readInc('appid'),
-            'redirect_uri' => urlencode($this->recorder->readInc('callback')),
-            'client_secret' => $this->recorder->readInc('appkey'),
+            'client_id' => $this->recorder->readConfig('appid'),
+            'redirect_uri' => urlencode($this->recorder->readConfig('callback')),
+            'client_secret' => $this->recorder->readConfig('appkey'),
             'code' => $_GET['code'],
         ];
 
         // 构造请求access_token的url
-        $token_url = $this->urlUtils->combineURL(self::GET_ACCESS_TOKEN_URL, $keysArr);
+        $token_url=self::GET_ACCESS_TOKEN_URL.http_build_query($keysArr);
         $response = $this->urlUtils->getContents($token_url);
 
         if (strpos($response, 'callback') !== false) {
@@ -107,7 +107,7 @@ class Oauth
             'access_token' => $this->recorder->read('access_token'),
         ];
 
-        $graph_url = $this->urlUtils->combineURL(self::GET_OPENID_URL, $keysArr);
+        $graph_url = self::GET_OPENID_URL.http_build_query($keysArr);
         $response = $this->urlUtils->getContents($graph_url);
 
         // 检测错误是否发生
