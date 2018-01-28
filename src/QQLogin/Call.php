@@ -25,7 +25,6 @@ class Call extends Oauth
      * @param string $access_token access_token value
      * @param string $openid openid value
      * @param array $config
-     *
      */
     public function __construct(string $access_token = null, string $openid = null, array $config = [])
     {
@@ -34,13 +33,13 @@ class Call extends Oauth
         //如果access_token和openid为空，则从session里去取，适用于demo展示情形
         if ($access_token === null || $openid === null) {
             $this->array = [
-                'oauth_consumer_key' => (int)$this->config->readConfig('appid'),
+                'oauth_consumer_key' => (int) $this->config->readConfig('appid'),
                 'access_token' => $this->config->get('access_token'),
                 'openid' => $this->config->get('openid'),
             ];
         } else {
             $this->array = [
-                'oauth_consumer_key' => (int)$this->config->readConfig('appid'),
+                'oauth_consumer_key' => (int) $this->config->readConfig('appid'),
                 'access_token' => $access_token,
                 'openid' => $openid,
             ];
@@ -131,7 +130,7 @@ class Call extends Oauth
                     $arr[$tmpKey] = $tmpVal;
                 } else {
                     if ($v = $_FILES[$tmpKey]) {
-                        $filename = dirname($v['tmp_name']) . '/' . $v['name'];
+                        $filename = dirname($v['tmp_name']).'/'.$v['name'];
                         move_uploaded_file($v['tmp_name'], $filename);
                         $arr[$tmpKey] = "@$filename";
                     } else {
@@ -153,7 +152,7 @@ class Call extends Oauth
 
             if (!$n) {
                 $str = implode(',', $val);
-                $this->error->showError('api调用参数错误', $str . '必填一个');
+                $this->error->showError('api调用参数错误', $str.'必填一个');
             }
         }
 
@@ -164,7 +163,7 @@ class Call extends Oauth
                 $response = $this->curl->post($baseUrl, $keysArr);
             }
         } elseif ($method === 'GET') {
-            $response = $this->curl->get($baseUrl . '?' . http_build_query($keysArr));
+            $response = $this->curl->get($baseUrl.'?'.http_build_query($keysArr));
         }
 
         return $response;
@@ -185,7 +184,6 @@ class Call extends Oauth
         if (empty($this->APIMap[$name])) {
             $this->error->showError('api调用名称错误', "不存在的API: <span style='color:red;'>$name</span>");
         }
-
 
         // 从APIMap获取api相应参数
         $baseUrl = $this->APIMap[$name][0];

@@ -47,7 +47,7 @@ class Oauth
             'scope' => $scope,
         ];
 
-        $login_url = self::GET_AUTH_CODE_URL . '?' . http_build_query($array);
+        $login_url = self::GET_AUTH_CODE_URL.'?'.http_build_query($array);
 
         // 跳转网址
 
@@ -76,7 +76,7 @@ class Oauth
 
         // 构造请求access_token 的 url
 
-        $token_url = self::GET_ACCESS_TOKEN_URL . '?' . http_build_query($array);
+        $token_url = self::GET_ACCESS_TOKEN_URL.'?'.http_build_query($array);
         $response = $this->curl->get($token_url);
         if (strpos($response, 'callback') !== false) {
             $lpos = strpos($response, '(');
@@ -107,7 +107,7 @@ class Oauth
             'access_token' => $this->config->get('access_token'),
         ];
 
-        $graph_url = self::GET_OPENID_URL . '?' . http_build_query($array);
+        $graph_url = self::GET_OPENID_URL.'?'.http_build_query($array);
         $response = $this->curl->get($graph_url);
 
         // 检测错误是否发生

@@ -14,11 +14,11 @@ use QQLogin\Call;
 use QQLogin\Oauth;
 
 $config = [
-    "appid" => "101440339",
-    "appkey" => "ac1c9a426b3685d61c928c5ee3509c7a",
-    "callback" => "http://demo.khs1994.com/tests/callback.php",
-    "scope" => "get_user_info",
-    "errorReport" => true,
+    'appid' => '101440339',
+    'appkey' => 'ac1c9a426b3685d61c928c5ee3509c7a',
+    'callback' => 'http://demo.khs1994.com/tests/callback.php',
+    'scope' => 'get_user_info',
+    'errorReport' => true,
 ];
 
 if ($_GET['logout'] === 'true') {
@@ -51,7 +51,7 @@ EOF;
     if ($_GET['login'] === 'true') {
         $oauth = new Oauth($config);
         $oauth->login();
-        //登录成功之后跳转到 响应页面
+    //登录成功之后跳转到 响应页面
     } else {
         echo <<<'EOF'
     <a href="?login=true"><img src="https://qzonestyle.gtimg.cn/qzone/vas/opensns/res/img/bt_92X120.png"></a>

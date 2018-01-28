@@ -12,7 +12,7 @@ class Config
     {
         $this->error = new Error();
 
-        $this->config = (object)$config;
+        $this->config = (object) $config;
         if (empty($this->config)) {
             $this->error->showError('20001');
         }
