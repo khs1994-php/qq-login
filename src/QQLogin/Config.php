@@ -1,35 +1,49 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: khs1994
+ * Date: 29/01/2018
+ * Time: 2:30 PM
+ */
 
 namespace QQLogin;
 
-class Config
+
+use Curl\Curl;
+
+trait Config
 {
-    private static $data;
-    private $config;
-    private $error;
+    public static $data;
 
-    public function __construct(array $config)
+    public $config;
+
+    public $curl;
+
+    public $error;
+
+    public function __construct()
     {
-        $this->error = new Error();
+        $this->config = (object)$_SESSION['QQ_SOURCE_DATA'];
 
-        $this->config = (object) $config;
-        if (empty($this->config)) {
-            $this->error->showError('20001');
-        }
-
-        if (empty($_SESSION['QC_userData'])) {
+        if (empty($_SESSION['QQ_DATA'])) {
             self::$data = [];
         } else {
-            self::$data = $_SESSION['QC_userData'];
+            self::$data = $_SESSION['QQ_DATA'];
         }
+
+        $this->curl = new Curl();
+        $this->error = new Error();
     }
 
     public function set(string $name, string $value)
     {
         self::$data[$name] = $value;
+        $_SESSION['QQ_DATA'] = self::$data;
     }
 
-    public function get($name)
+    // 获取单个配置
+
+    public function get(string $name)
     {
         if (empty(self::$data[$name])) {
             return 0;
@@ -37,6 +51,16 @@ class Config
             return self::$data[$name];
         }
     }
+
+    // 删除单个配置
+
+    public function delete(string $name)
+    {
+        unset(self::$data[$name]);
+        $_SESSION['QQ_DATA'] = self::$data;
+    }
+
+    // 读取原始配置
 
     public function readConfig(string $name)
     {
@@ -47,13 +71,4 @@ class Config
         }
     }
 
-    public function delete(string $name)
-    {
-        unset(self::$data[$name]);
-    }
-
-    public function __destruct()
-    {
-        $_SESSION['QC_userData'] = self::$data;
-    }
 }

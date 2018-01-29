@@ -11,7 +11,6 @@ namespace QQLogin;
 class Error
 {
     private $errorMsg;
-    private $recorder;
 
     public function __construct()
     {
@@ -28,8 +27,6 @@ class Error
      *
      * @param string $code 错误代码
      * @param string $description 描述信息（可选）
-     *
-     * @return array
      */
     public function showError(string $code, string $description = null)
     {
@@ -37,10 +34,10 @@ class Error
             die($this->errorMsg[$code]);
         } else {
             header("Content-Type: application/json");
-            echo json_encode([
+            die(json_encode([
                 'ret' => $code,
                 'msg' => $description,
-            ]);
+            ]));
         }
     }
 }

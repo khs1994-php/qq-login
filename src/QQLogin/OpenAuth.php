@@ -2,40 +2,34 @@
 
 namespace QQLogin;
 
-use Curl\Curl;
-
-class Oauth
+class OpenAuth
 {
     const VERSION = 'v18.01';
     const GET_AUTH_CODE_URL = 'https://graph.qq.com/oauth2.0/authorize';
     const GET_ACCESS_TOKEN_URL = 'https://graph.qq.com/oauth2.0/token';
     const GET_OPENID_URL = 'https://graph.qq.com/oauth2.0/me';
 
-    protected $config;
-    public $curl;
-    protected $error;
+    use Config;
 
-    public function __construct(array $config = [])
+    // 第一步，拼接请求 QQ 登录页
+
+    public function getLoginUrl()
     {
-        $this->config = new Config($config);
-        $this->error = new Error();
-        $this->curl = new Curl();
-    }
+        // 读取原始配置
 
-    public function login()
-    {
-        // 读取配置
-
-        $appid = $this->config->readConfig('appid');
-        $callback = $this->config->readConfig('callback');
-        $scope = $this->config->readConfig('scope');
+        $appid = $this->readConfig('appid');
+        $callback = $this->readConfig('callback');
+        $scope = $this->readConfig('scope');
 
         // 生成唯一随机串防 CSRF 攻击
+
         $state = md5(uniqid(rand(), true));
 
-        // 写入配置
+        // 写入动态配置
 
-        $this->config->set('state', $state);
+        var_dump($_SESSION);
+
+        $this->set('state', $state);
 
         // 构造请求参数列表
 
@@ -47,16 +41,19 @@ class Oauth
             'scope' => $scope,
         ];
 
-        $login_url = self::GET_AUTH_CODE_URL.'?'.http_build_query($array);
+        $login_url = self::GET_AUTH_CODE_URL . '?' . http_build_query($array);
 
-        // 跳转网址
+        // 第二步，跳转网址，用户输入 QQ 账号密码
 
         header("Location:$login_url");
     }
 
+    // 第三步，通过 GET 方法获得的 code 来获取 Access_token
+
     public function getAccessToken()
     {
-        $state = $this->config->get('state');
+
+        $state = $this->get('state');
 
         // 验证 state 防止 CSRF 攻击
 
@@ -64,19 +61,21 @@ class Oauth
             $this->error->showError('30001');
         }
 
+        $code = $_GET['code'];
+
         // 请求参数列表
 
         $array = [
             'grant_type' => 'authorization_code',
-            'client_id' => $this->config->readConfig('appid'),
-            'redirect_uri' => $this->config->readConfig('callback'),
-            'client_secret' => $this->config->readConfig('appkey'),
-            'code' => $_GET['code'],
+            'client_id' => $this->readConfig('appid'),
+            'redirect_uri' => $this->readConfig('callback'),
+            'client_secret' => $this->readConfig('appkey'),
+            'code' => $code,
         ];
 
-        // 构造请求access_token 的 url
+        // 构造请求 access_token 的 url
 
-        $token_url = self::GET_ACCESS_TOKEN_URL.'?'.http_build_query($array);
+        $token_url = self::GET_ACCESS_TOKEN_URL . '?' . http_build_query($array);
         $response = $this->curl->get($token_url);
         if (strpos($response, 'callback') !== false) {
             $lpos = strpos($response, '(');
@@ -94,20 +93,24 @@ class Oauth
 
         $access_token = $params['access_token'];
 
-        $this->config->set('access_token', $access_token);
+        $this->set('access_token', $access_token);
+
+        // 返回 Access_token
 
         return $access_token;
     }
+
+    // 获取用户 OpenId
 
     public function getOpenId()
     {
         // 请求参数列表
 
         $array = [
-            'access_token' => $this->config->get('access_token'),
+            'access_token' => $this->get('access_token'),
         ];
 
-        $graph_url = self::GET_OPENID_URL.'?'.http_build_query($array);
+        $graph_url = self::GET_OPENID_URL . '?' . http_build_query($array);
         $response = $this->curl->get($graph_url);
 
         // 检测错误是否发生
@@ -127,7 +130,7 @@ class Oauth
 
         $openId = $user->openid;
 
-        $this->config->set('openid', $openId);
+        $this->set('openid', $openId);
 
         return $openId;
     }

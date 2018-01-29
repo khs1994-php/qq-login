@@ -3,42 +3,21 @@
 namespace QQLogin;
 
 /**
- * @brief QC类，api外部对象，调用接口全部依赖于此对象
+ * 通过 OpenId Access_token 等来调用 QQ Api
+ *
+ * 例如获取用户基本信息
  *
  */
-class Call extends Oauth
+
+class Call
 {
-    private $array;
     private $APIMap;
+    private $array;
 
-    /**
-     *
-     * 构造方法
-     *
-     * @param string $access_token access_token value
-     * @param string $openid openid value
-     * @param array $config
-     *
-     */
-    public function __construct(string $access_token = null, string $openid = null, array $config = [])
+    use Config;
+
+    public function apiList()
     {
-        parent::__construct($config);
-
-        // 如果 access_token 和 openid 为空，则从 session 里去取，适用于 demo 展示情形
-        if ($access_token === null || $openid === null) {
-            $this->array = [
-                'oauth_consumer_key' => (int) $this->config->readConfig('appid'),
-                'access_token' => $this->config->get('access_token'),
-                'openid' => $this->config->get('openid'),
-            ];
-        } else {
-            $this->array = [
-                'oauth_consumer_key' => (int) $this->config->readConfig('appid'),
-                'access_token' => $access_token,
-                'openid' => $openid,
-            ];
-        }
-
         /*
          * 加#表示非必须，无则不传入url(url中不会出现该参数)， "key" => "val" 表示key如果没有定义则使用默认值val
          * 规则 array( baseUrl, argListArr, method)
@@ -46,7 +25,8 @@ class Call extends Oauth
          */
         $this->APIMap = [
 
-            /*                       qzone                    */
+            // qzone
+
             'add_blog' => [
                 'https://graph.qq.com/blog/add_one_blog',
                 ['title', 'format' => 'json', 'content' => null],
@@ -80,7 +60,8 @@ class Call extends Oauth
                 'https://graph.qq.com/user/check_page_fans',
                 ['page_id' => '314416946', 'format' => 'json'],
             ],
-            /*                           pay                          */
+
+            // pay
 
             'get_tenpay_addr' => [
                 'https://graph.qq.com/cft_info/get_tenpay_addr',
@@ -89,7 +70,7 @@ class Call extends Oauth
         ];
     }
 
-    //调用相应api
+    // 调用相应 api
 
     private function applyAPI($arr, $argsList, string $baseUrl, string $method)
     {
@@ -124,7 +105,7 @@ class Call extends Oauth
                     $arr[$tmpKey] = $tmpVal;
                 } else {
                     if ($v = $_FILES[$tmpKey]) {
-                        $filename = dirname($v['tmp_name']).'/'.$v['name'];
+                        $filename = dirname($v['tmp_name']) . '/' . $v['name'];
                         move_uploaded_file($v['tmp_name'], $filename);
                         $arr[$tmpKey] = "@$filename";
                     } else {
@@ -135,7 +116,9 @@ class Call extends Oauth
 
             $keysArr[$tmpKey] = $arr[$tmpKey];
         }
+
         // 检查选填参数必填一的情形
+
         foreach ($optionArgList as $val) {
             $n = 0;
             foreach ($val as $v) {
@@ -146,7 +129,7 @@ class Call extends Oauth
 
             if (!$n) {
                 $str = implode(',', $val);
-                $this->error->showError('api调用参数错误', $str.'必填一个');
+                $this->error->showError('api调用参数错误', $str . '必填一个');
             }
         }
 
@@ -157,7 +140,7 @@ class Call extends Oauth
                 $response = $this->curl->post($baseUrl, $keysArr);
             }
         } elseif ($method === 'GET') {
-            $response = $this->curl->get($baseUrl.'?'.http_build_query($keysArr));
+            $response = $this->curl->get($baseUrl . '?' . http_build_query($keysArr));
         }
 
         return $response;
@@ -175,35 +158,60 @@ class Call extends Oauth
      */
     public function __call(string $name, array $arg)
     {
+        // 如果方法没传入 access_token 或者 openId，就从配置中获取
+
+        if ($arg['access_token'] === null || $arg['openid'] === null) {
+            $this->array = [
+                'oauth_consumer_key' => (int)$this->readConfig('appid'),
+                'access_token' => $this->get('access_token'),
+                'openid' => $this->get('openid'),
+            ];
+        } else {
+            $this->array = [
+                'oauth_consumer_key' => (int)$this->readConfig('appid'),
+                'access_token' => $arg['access_token'],
+                'openid' => $arg['openid'],
+            ];
+        }
+
         // 如果APIMap不存在相应的api
+
+        $this->apiList();
+
         if (empty($this->APIMap[$name])) {
-            $this->error->showError('api调用名称错误', "不存在的API: <span style='color:red;'>$name</span>");
+            $this->error->showError('api 调用名称错误', "不存在的API");
         }
 
         // 从APIMap获取api相应参数
+
         $baseUrl = $this->APIMap[$name][0];
         $argsList = $this->APIMap[$name][1];
+
+        // 获取请求方法啊
+
         $method = isset($this->APIMap[$name][2]) ? $this->APIMap[$name][2] : 'GET';
 
-        if (empty($arg)) {
-            $arg[0] = null;
-        }
-        // 对于get_tenpay_addr，特殊处理，php json_decode对\xA312此类字符支持不好
-        if ($name !== 'get_tenpay_addr') {
+        if ($name === 'get_tenpay_addr') {
+            // 对于 get_tenpay_addr，特殊处理，php json_decode 对\xA312 此类字符支持不好
+
+            $responseArr = $this->simple_json_parser($this->applyAPI($arg[0], $argsList, $baseUrl, $method));
+        } else {
             $response = json_decode($this->applyAPI($arg[0], $argsList, $baseUrl, $method));
             $responseArr = $this->objToArr($response);
-        } else {
-            $responseArr = $this->simple_json_parser($this->applyAPI($arg[0], $argsList, $baseUrl, $method));
         }
+
         // 检查返回ret判断api是否成功调用
+
         if ($responseArr['ret'] === 0) {
             return $responseArr;
-        } else {
-            $this->error->showError($response->ret, $response->msg);
         }
+
+        $this->error->showError($response->ret, $response->msg);
+        return [];
     }
 
     // php 对象到数组转换
+
     private function objToArr($obj)
     {
         if (!is_object($obj) && !is_array($obj)) {
@@ -226,6 +234,7 @@ class Call extends Oauth
      * @return string 返加access_token
      *
      */
+
     public function getAccessToken()
     {
         return $this->config->get('access_token');
