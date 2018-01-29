@@ -7,20 +7,61 @@
 `composer` 引入
 
 ```bash
-$ composer require khs1994/qq-login:dev-master
+$ composer require khs1994/qq-login @dev
 ```
-
 
 或者编辑 `composer.json`
 
 ```json
 {
   "require":{
-    "khs1994/qq-login":"dev-master"
+    "khs1994/qq-login":"@dev"
   }
 }
 ```
 
 # 使用方法
 
-请查看 `tests` 文件夹示例代码。
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use QQLogin\QQLogin;
+
+$config = [
+    'appid' => '8888...',
+    'appkey' => 'XXXX...',
+    'callback' => 'http://demo.khs1994.com/tests/callback.php',
+    'scope' => 'get_user_info',
+    'errorReport' => true,
+];
+
+$qq = new QQLogin($config);
+
+# 请求 QQ 登录页
+
+$qq->getLoginUrl();
+
+# 回调地址中再次请求密钥
+
+$access_token = $qq->getAccessToken();
+
+$openid = $qq->getOpenId();
+
+# 通过密钥等获取用户信息，返回数组
+
+$array = $qq->call->get_user_info();
+```
+
+## 示例
+
+请查看 [`index.php`](index.php)
+
+# 感谢
+
+* [QQ互联](https://connect.qq.com/index.html)
+
+* [khs1994/curl](https://github.com/khs1994-php/curl)
+
+* [khs1994.com](https://developer.khs1994.com)
