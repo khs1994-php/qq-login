@@ -3,11 +3,10 @@
  * Created by PhpStorm.
  * User: khs1994
  * Date: 29/01/2018
- * Time: 2:30 PM
+ * Time: 2:30 PM.
  */
 
 namespace QQLogin;
-
 
 use Curl\Curl;
 
@@ -23,7 +22,7 @@ trait Config
 
     public function __construct()
     {
-        $this->config = (object)$_SESSION['QQ_SOURCE_DATA'];
+        $this->config = (object) $_SESSION['QQ_SOURCE_DATA'];
 
         if (empty($_SESSION['QQ_DATA'])) {
             self::$data = [];
@@ -70,5 +69,4 @@ trait Config
             return $this->config->$name;
         }
     }
-
 }

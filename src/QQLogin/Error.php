@@ -3,11 +3,8 @@
 namespace QQLogin;
 
 /**
- *
  * @brief ErrorCase类，封闭异常
- *
  */
-
 class Error
 {
     private $errorMsg;
@@ -33,7 +30,7 @@ class Error
         if ($description === null) {
             die($this->errorMsg[$code]);
         } else {
-            header("Content-Type: application/json");
+            header('Content-Type: application/json');
             die(json_encode([
                 'ret' => $code,
                 'msg' => $description,

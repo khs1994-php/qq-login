@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: khs1994
  * Date: 29/01/2018
- * Time: 2:11 PM
+ * Time: 2:11 PM.
  */
 
 namespace QQLogin;

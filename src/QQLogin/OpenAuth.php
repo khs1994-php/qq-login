@@ -41,7 +41,7 @@ class OpenAuth
             'scope' => $scope,
         ];
 
-        $login_url = self::GET_AUTH_CODE_URL . '?' . http_build_query($array);
+        $login_url = self::GET_AUTH_CODE_URL.'?'.http_build_query($array);
 
         // 第二步，跳转网址，用户输入 QQ 账号密码
 
@@ -52,7 +52,6 @@ class OpenAuth
 
     public function getAccessToken()
     {
-
         $state = $this->get('state');
 
         // 验证 state 防止 CSRF 攻击
@@ -75,7 +74,7 @@ class OpenAuth
 
         // 构造请求 access_token 的 url
 
-        $token_url = self::GET_ACCESS_TOKEN_URL . '?' . http_build_query($array);
+        $token_url = self::GET_ACCESS_TOKEN_URL.'?'.http_build_query($array);
         $response = $this->curl->get($token_url);
         if (strpos($response, 'callback') !== false) {
             $lpos = strpos($response, '(');
@@ -110,7 +109,7 @@ class OpenAuth
             'access_token' => $this->get('access_token'),
         ];
 
-        $graph_url = self::GET_OPENID_URL . '?' . http_build_query($array);
+        $graph_url = self::GET_OPENID_URL.'?'.http_build_query($array);
         $response = $this->curl->get($graph_url);
 
         // 检测错误是否发生

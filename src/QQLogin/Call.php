@@ -3,12 +3,10 @@
 namespace QQLogin;
 
 /**
- * 通过 OpenId Access_token 等来调用 QQ Api
+ * 通过 OpenId Access_token 等来调用 QQ Api.
  *
  * 例如获取用户基本信息
- *
  */
-
 class Call
 {
     private $APIMap;
@@ -105,7 +103,7 @@ class Call
                     $arr[$tmpKey] = $tmpVal;
                 } else {
                     if ($v = $_FILES[$tmpKey]) {
-                        $filename = dirname($v['tmp_name']) . '/' . $v['name'];
+                        $filename = dirname($v['tmp_name']).'/'.$v['name'];
                         move_uploaded_file($v['tmp_name'], $filename);
                         $arr[$tmpKey] = "@$filename";
                     } else {
@@ -129,7 +127,7 @@ class Call
 
             if (!$n) {
                 $str = implode(',', $val);
-                $this->error->showError('api调用参数错误', $str . '必填一个');
+                $this->error->showError('api调用参数错误', $str.'必填一个');
             }
         }
 
@@ -140,7 +138,7 @@ class Call
                 $response = $this->curl->post($baseUrl, $keysArr);
             }
         } elseif ($method === 'GET') {
-            $response = $this->curl->get($baseUrl . '?' . http_build_query($keysArr));
+            $response = $this->curl->get($baseUrl.'?'.http_build_query($keysArr));
         }
 
         return $response;
@@ -154,7 +152,6 @@ class Call
      * @param array $arg 参数列表数组
      *
      * @return array          返加调用结果数组
-     *
      */
     public function __call(string $name, array $arg)
     {
@@ -162,13 +159,13 @@ class Call
 
         if ($arg['access_token'] === null || $arg['openid'] === null) {
             $this->array = [
-                'oauth_consumer_key' => (int)$this->readConfig('appid'),
+                'oauth_consumer_key' => (int) $this->readConfig('appid'),
                 'access_token' => $this->get('access_token'),
                 'openid' => $this->get('openid'),
             ];
         } else {
             $this->array = [
-                'oauth_consumer_key' => (int)$this->readConfig('appid'),
+                'oauth_consumer_key' => (int) $this->readConfig('appid'),
                 'access_token' => $arg['access_token'],
                 'openid' => $arg['openid'],
             ];
@@ -179,7 +176,7 @@ class Call
         $this->apiList();
 
         if (empty($this->APIMap[$name])) {
-            $this->error->showError('api 调用名称错误', "不存在的API");
+            $this->error->showError('api 调用名称错误', '不存在的API');
         }
 
         // 从APIMap获取api相应参数
@@ -207,6 +204,7 @@ class Call
         }
 
         $this->error->showError($response->ret, $response->msg);
+
         return [];
     }
 
@@ -232,9 +230,7 @@ class Call
      * @param void
      *
      * @return string 返加access_token
-     *
      */
-
     public function getAccessToken()
     {
         return $this->config->get('access_token');

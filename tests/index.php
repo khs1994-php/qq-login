@@ -49,12 +49,11 @@ if ($_SESSION['status'] === true) {
 
     header('Content-type: application/json;charset=utf8');
     echo json_encode($array);
-
 } else {
     if ($_GET['login'] === 'true') {
         $qq = new QQLogin($config);
         $qq->getLoginUrl();
-        //登录成功之后跳转到 响应页面
+    //登录成功之后跳转到 响应页面
     } else {
         echo <<<'EOF'
     <a href="?login=true"><img src="https://qzonestyle.gtimg.cn/qzone/vas/opensns/res/img/bt_92X120.png"></a>
