@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: khs1994
- * Date: 29/01/2018
- * Time: 2:30 PM.
- */
 
 namespace QQLogin;
 
@@ -18,11 +12,9 @@ trait Config
 
     public $curl;
 
-    public $error;
-
     public function __construct()
     {
-        $this->config = (object) $_SESSION['QQ_SOURCE_DATA'];
+        $this->config = (object)$_SESSION['QQ_SOURCE_DATA'];
 
         if (empty($_SESSION['QQ_DATA'])) {
             self::$data = [];
@@ -31,7 +23,6 @@ trait Config
         }
 
         $this->curl = new Curl();
-        $this->error = new Error();
     }
 
     public function set(string $name, string $value)

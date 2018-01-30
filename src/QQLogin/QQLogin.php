@@ -25,9 +25,12 @@ class QQLogin
 
         // 如果配置为空，返回错误
 
-        if (empty($config)) {
-            $error = new Error();
-            $error->showError('20001');
+        try {
+            if (empty($config)) {
+                throw new QQError('20001');
+            }
+        } catch (QQError $e) {
+            $e->showError();
         }
     }
 

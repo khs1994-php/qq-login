@@ -16,13 +16,8 @@ $redis->connect('redis');
 
 $appKey = $redis->get('qq_login_appkey');
 
-$config = [
-    'appid' => '101407196',
-    'appkey' => $appKey,
-    'callback' => 'https://login.khs1994.com/',
-    'scope' => 'get_user_info',
-    'errorReport' => true,
-];
+$config = ['appid' => '101407196', 'appkey' => $appKey, 'callback' => 'https://login.khs1994.com/',
+    'scope' => 'get_user_info', 'errorReport' => true,];
 
 $qq = new QQLogin($config);
 
