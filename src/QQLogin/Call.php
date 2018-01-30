@@ -26,22 +26,22 @@ class Call
             // qzone
 
             'add_blog' => ['https://graph.qq.com/blog/add_one_blog', ['title', 'format' => 'json', 'content' => null],
-                'POST',], 'add_topic' => ['https://graph.qq.com/shuoshuo/add_topic',
+                'POST', ], 'add_topic' => ['https://graph.qq.com/shuoshuo/add_topic',
                 ['richtype', 'richval', 'con', '#lbs_nm', '#lbs_x', '#lbs_y', 'format' => 'json', '#third_source'],
-                'POST',], 'get_user_info' => ['https://graph.qq.com/user/get_user_info', ['format' => 'json'], 'GET',],
+                'POST', ], 'get_user_info' => ['https://graph.qq.com/user/get_user_info', ['format' => 'json'], 'GET'],
             'add_album' => ['https://graph.qq.com/photo/add_album',
-                ['albumname', '#albumdesc', '#priv', 'format' => 'json'], 'POST',],
+                ['albumname', '#albumdesc', '#priv', 'format' => 'json'], 'POST', ],
             'upload_pic' => ['https://graph.qq.com/photo/upload_pic',
                 ['picture', '#photodesc', '#title', '#albumid', '#mobile', '#x', '#y', '#needfeed', '#successnum',
-                    '#picnum', 'format' => 'json'], 'POST',],
-            'list_album' => ['https://graph.qq.com/photo/list_album', ['format' => 'json'],],
+                    '#picnum', 'format' => 'json', ], 'POST', ],
+            'list_album' => ['https://graph.qq.com/photo/list_album', ['format' => 'json']],
             'check_page_fans' => ['https://graph.qq.com/user/check_page_fans',
-                ['page_id' => '314416946', 'format' => 'json'],],
+                ['page_id' => '314416946', 'format' => 'json'], ],
 
             // pay
 
             'get_tenpay_addr' => ['https://graph.qq.com/cft_info/get_tenpay_addr',
-                ['ver' => 1, 'limit' => 5, 'offset' => 0, 'format' => 'json'],],];
+                ['ver' => 1, 'limit' => 5, 'offset' => 0, 'format' => 'json'], ], ];
     }
 
     // 调用相应 api
@@ -88,7 +88,6 @@ class Call
                         } catch (QQError $e) {
                             $e->showError();
                         }
-
                     }
                 }
             }
@@ -143,11 +142,11 @@ class Call
         // 如果方法没传入 access_token 或者 openId，就从配置中获取
 
         if ($arg['access_token'] === null || $arg['openid'] === null) {
-            $this->array = ['oauth_consumer_key' => (int)$this->readConfig('appid'),
-                'access_token' => $this->get('access_token'), 'openid' => $this->get('openid'),];
+            $this->array = ['oauth_consumer_key' => (int) $this->readConfig('appid'),
+                'access_token' => $this->get('access_token'), 'openid' => $this->get('openid'), ];
         } else {
-            $this->array = ['oauth_consumer_key' => (int)$this->readConfig('appid'),
-                'access_token' => $arg['access_token'], 'openid' => $arg['openid'],];
+            $this->array = ['oauth_consumer_key' => (int) $this->readConfig('appid'),
+                'access_token' => $arg['access_token'], 'openid' => $arg['openid'], ];
         }
 
         // 如果APIMap不存在相应的api
@@ -156,7 +155,7 @@ class Call
 
         if (empty($this->APIMap[$name])) {
             try {
-                throw new QQError(1, "api 调用名称错误，不存在的API");
+                throw new QQError(1, 'api 调用名称错误，不存在的API');
             } catch (QQError $e) {
                 $e->showError();
             }
@@ -186,10 +185,11 @@ class Call
             return $responseArr;
         }
         try {
-            throw new QQError((int)$response->ret, $response->msg);
+            throw new QQError((int) $response->ret, $response->msg);
         } catch (QQError $e) {
             $e->showError();
         }
+
         return [];
     }
 

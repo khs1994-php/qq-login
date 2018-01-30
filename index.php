@@ -17,7 +17,7 @@ $redis->connect('redis');
 $appKey = $redis->get('qq_login_appkey');
 
 $config = ['appid' => '101407196', 'appkey' => $appKey, 'callback' => 'https://login.khs1994.com/',
-    'scope' => 'get_user_info', 'errorReport' => true,];
+    'scope' => 'get_user_info', 'errorReport' => true, ];
 
 $qq = new QQLogin($config);
 
@@ -31,7 +31,7 @@ if ($_GET['code'] && $_GET['state']) {
     $_SESSION['openid'] = $openid;
 
     $_SESSION['status'] = true;
-    header("Location:.");
+    header('Location:.');
 }
 
 // 如果地址带有 logout=true 说明用户点击了退出，清空相关信息
@@ -63,7 +63,7 @@ if ($_SESSION['status'] === true) {
 } else {
     if ($_GET['login'] === 'true') {
         $qq->getLoginUrl();
-        //登录成功之后跳转到 响应页面
+    //登录成功之后跳转到 响应页面
     } else {
         echo <<<'EOF'
     <a href="?login=true"><img src="https://qzonestyle.gtimg.cn/qzone/vas/opensns/res/img/bt_92X120.png"></a>

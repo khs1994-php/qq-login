@@ -34,7 +34,7 @@ class OpenAuth
         // 构造请求参数列表
 
         $array = ['response_type' => 'code', 'client_id' => $appid, 'redirect_uri' => $callback, 'state' => $state,
-            'scope' => $scope,];
+            'scope' => $scope, ];
 
         $login_url = self::GET_AUTH_CODE_URL.'?'.http_build_query($array);
 
@@ -65,7 +65,7 @@ class OpenAuth
 
         $array = ['grant_type' => 'authorization_code', 'client_id' => $this->readConfig('appid'),
             'redirect_uri' => $this->readConfig('callback'), 'client_secret' => $this->readConfig('appkey'),
-            'code' => $code,];
+            'code' => $code, ];
 
         // 构造请求 access_token 的 url
 
@@ -79,7 +79,7 @@ class OpenAuth
 
             if (isset($msg->error)) {
                 try {
-                    throw new QQError((int)$msg->error, $msg->error_description);
+                    throw new QQError((int) $msg->error, $msg->error_description);
                 } catch (QQError $e) {
                     $e->showError();
                 }
@@ -104,7 +104,7 @@ class OpenAuth
     {
         // 请求参数列表
 
-        $array = ['access_token' => $this->get('access_token'),];
+        $array = ['access_token' => $this->get('access_token')];
 
         $graph_url = self::GET_OPENID_URL.'?'.http_build_query($array);
         $response = $this->curl->get($graph_url);
