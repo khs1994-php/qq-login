@@ -14,7 +14,7 @@ trait Config
 
     public function __construct()
     {
-        $this->config = (object)$_SESSION['QQ_SOURCE_DATA'];
+        $this->config = (object) $_SESSION['QQ_SOURCE_DATA'];
 
         if (empty($_SESSION['QQ_DATA'])) {
             self::$data = [];
