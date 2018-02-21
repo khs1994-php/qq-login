@@ -1,41 +1,59 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: khs1994
- * Date: 29/01/2018
- * Time: 2:11 PM.
- */
 
 namespace QQLogin;
 
+use QQLogin\Error\QQError;
+
+/**
+ * Class QQLogin
+ *
+ * @method OpenAuth getAccessToken()
+ * @method OPenAuth getOpenId()
+ * @method OPenAuth getLoginUrl()
+ * @method Api api()
+ * @package QQLogin
+ */
 class QQLogin
 {
-    private $openAuth;
-
-    public $call;
-
-    // 构造函数写入配置
-
-    public function __construct(array $config)
+    /**
+     *
+     * 构造函数写入配置
+     *
+     * @param int    $appId
+     * @param string $appKey
+     * @param string $callback
+     * @param string $scope
+     * @param bool   $errorReport
+     * @param string $drive
+     * @throws QQError
+     */
+    public function __construct(int $appId,
+                                string $appKey,
+                                string $callback,
+                                string $scope = 'get_user_info',
+                                bool $errorReport = true,
+                                string $drive = 'session')
     {
-        $_SESSION['QQ_SOURCE_DATA'] = $config;
-
-        $this->call = new Call();
-        $this->openAuth = new OpenAuth();
-
-        // 如果配置为空，返回错误
-
-        try {
-            if (empty($config)) {
-                throw new QQError('20001');
-            }
-        } catch (QQError $e) {
-            $e->showError();
-        }
+        $_SESSION['QQ_CONFIG_DATA'] = [
+            'appid' => $appId,
+            'appkey' => $appKey,
+            'callback' => $callback,
+            'scope' => $scope,
+            'drive' => $drive,
+        ];
     }
 
     public function __call($name, $value)
     {
-        return $this->openAuth->$name();
+        switch ($name) {
+            case "api":
+
+                return new Api();
+
+            default:
+                $openAuth = new OpenAuth();
+
+                return $openAuth->$name();
+        }
     }
 }
