@@ -4,20 +4,8 @@
 
 # 安装
 
-`composer` 引入
-
 ```bash
 $ composer require khs1994/qq-login @dev
-```
-
-或者编辑 `composer.json`
-
-```json
-{
-  "require":{
-    "khs1994/qq-login":"@dev"
-  }
-}
 ```
 
 # 使用方法
